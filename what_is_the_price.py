@@ -23,7 +23,7 @@ def parse_text_from(url: str, text: str) -> bool:
     respond = requests.get(url=url, headers=headers, timeout=10)
     if respond.status_code == 200:
         # print("Downloading successed")
-        if text in respond.text:
+        if text.strip().lower() in respond.text.lower():
             return True
     else:
         # print("Download failed")
