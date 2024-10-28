@@ -2,7 +2,8 @@ import argparse
 import requests
 
 # Config property location and property type
-LOCATION = "macgregor-qld-4109"
+LOCATION_MACGREGOR = "macgregor-qld-4109"
+LOCATION_MANSFIELD = "mansfield-qld-4122"
 PROPERTY_TYPE = "free-standing"
 
 parser = argparse.ArgumentParser(description="A tool to find upper marketing range of a property in domain.co.au")
@@ -15,7 +16,7 @@ target_text = args['text']
 
 # Generate a price list, 700K to 10M
 BASE_PRICE_100K = 100000
-price_list = [x * BASE_PRICE_100K  for x in range(7, 100)] 
+price_list = [x * BASE_PRICE_100K  for x in range(9, 100)] 
 
 def parse_text_from(url: str, text: str) -> bool:
     headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'}
@@ -34,12 +35,14 @@ def parse_text_from(url: str, text: str) -> bool:
 upper_limit = 0
 for price in price_list:
     # We are only looking at the first two pages
-    url1 = f"https://www.domain.com.au/sale/{LOCATION}/{PROPERTY_TYPE}/?price={price}-any&page=1"
-    url2 = f"https://www.domain.com.au/sale/{LOCATION}/{PROPERTY_TYPE}/?price={price}-any&page=2"
+    url1 = f"https://www.domain.com.au/sale/{LOCATION_MACGREGOR}/{PROPERTY_TYPE}/?price={price}-any&page=1"
+    url2 = f"https://www.domain.com.au/sale/{LOCATION_MACGREGOR}/{PROPERTY_TYPE}/?price={price}-any&page=2"
+    url3 = f"https://www.domain.com.au/sale/{LOCATION_MANSFIELD}/{PROPERTY_TYPE}/?price={price}-any&page=1"
+    url4 = f"https://www.domain.com.au/sale/{LOCATION_MANSFIELD}/{PROPERTY_TYPE}/?price={price}-any&page=2"
 
     price_in_millions = price /  1000000
     
-    if parse_text_from(url1, target_text) or parse_text_from(url2, target_text):
+    if parse_text_from(url1, target_text) or parse_text_from(url2, target_text) or parse_text_from(url3, target_text) or parse_text_from(url4, target_text):
         print(f"Found at price point: {price_in_millions}m")
         upper_limit = price_in_millions
     else:
